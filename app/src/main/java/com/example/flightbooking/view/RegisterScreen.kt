@@ -26,12 +26,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.flightbooking.R
 
 @Composable
 fun RegisterScreen() {
@@ -43,17 +45,16 @@ fun RegisterScreen() {
     ) {
         val (createAccountTitle, nameTitle, nameTextField, emailTitle, emailTextField, passwordTitle, passwordTextField, termsOfServiceText, signUpButton, orDivider, signUpWithGoogle, alreadyHaveAccountText) = createRefs()
         Text(
-            text = "Create an Account",
+            text = stringResource(R.string.create_an_account),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(createAccountTitle) {
                 top.linkTo(parent.top, margin = 60.dp)
                 start.linkTo(parent.start, margin = 5.dp)
-
             })
 
         Text(
-            text = "Name",
+            text = stringResource(R.string.name),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(nameTitle) {
@@ -63,7 +64,7 @@ fun RegisterScreen() {
 
         OutlinedTextField(
             value = "", onValueChange = { }, label = {
-                Text("John Doe")
+                Text(stringResource(R.string.john_doe))
             }, modifier = Modifier
                 .padding(5.dp)
                 .constrainAs(nameTextField) {
@@ -118,7 +119,7 @@ fun RegisterScreen() {
                 })
 
         Text(
-            "By continuing, you agree to our terms of service ",
+            stringResource(R.string.by_continuing_you_agree_to_our_terms_of_service),
             color = Color.Gray,
             modifier = Modifier.constrainAs(termsOfServiceText) {
                 top.linkTo(passwordTextField.bottom, margin = 20.dp)
@@ -127,8 +128,6 @@ fun RegisterScreen() {
 
         OutlinedButton(
             onClick = {},
-//            colors = ButtonColors(containerColor = ),
-
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFe60000)),
             modifier = Modifier
@@ -141,7 +140,7 @@ fun RegisterScreen() {
                 },
 
             ) {
-            Text("Sign Up")
+            Text(stringResource(R.string.sign_up))
         }
 
 
@@ -171,11 +170,11 @@ fun RegisterScreen() {
                     width = Dimension.fillToConstraints
                 }
         ) {
-            Text("Continue With Google", color = Color.Black)
+            Text(stringResource(R.string.continue_with_google), color = Color.Black)
         }
 
         Text(
-            "Already have an account? Sign in here",
+            stringResource(R.string.already_have_an_account_sign_in_here),
             color = Color.Gray,
             fontSize = 15.sp,
             modifier = Modifier.constrainAs(alreadyHaveAccountText) {

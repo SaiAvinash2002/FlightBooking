@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">FlightBooking</string>
+    <string name="enter_the_verification_code_we_just_sent_on_your_phone_number">Enter the verification code we just sent on your phone number</string>
+    <string name="otp_verification">OTP Verification</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="enter_your_new_password_twice_below_to_reset_a_new_password">Enter your new password twice below to reset a new password</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="toggle_password">toggle password</string>
+    <string name="password">Password</string>
+    <string name="re_enter_new_password">Re-enter new password</string>
+    <string name="re_enter_password">Re-Enter Password</string>
+    <string name="create_an_account">Create an account</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="by_continuing_you_agree_to_our_terms_of_service">"By continuing, you agree to our terms of service "</string>
+    <string name="already_have_an_account_sign_in_here">Already have an account? Sign in here</string>
+    <string name="continue_with_google">Continue With Google</string>
+    <string name="name">Name</string>
+    <string name="john_doe">John Doe</string>
+    <string name="welcome_back_to_the_app">Welcome back to the app</string>
+    <string name="email_address">Email Address</string>
+    <string name="login">Login</string>
+    <string name="keep_me_signed_in">Keep me Signed In</string>
+    <string name="keep_me_signed_in_check_in">keep me signed in check in</string>
+    <string name="phone_number">Phone number</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="password_reset">Password Reset</string>
+    <string name="enter_your_email_address_to_get_the_password_reset_link">Enter your email address to get the password reset link.</string>
+    <string name="verify">Verify</string>
 </resources>

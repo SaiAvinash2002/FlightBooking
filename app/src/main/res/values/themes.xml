@@ -2,4 +2,13 @@
 <resources>
 
     <style name="Theme.FlightBooking" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.FlightBooking.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">
+            @drawable/ic_launcher_foreground
+        </item>
+        <item name="windowSplashScreenBackground">
+            #e60000
+        </item>
+    </style>
 </resources>
