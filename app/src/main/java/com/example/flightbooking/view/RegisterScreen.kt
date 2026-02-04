@@ -1,5 +1,6 @@
 package com.example.flightbooking.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -8,15 +9,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,14 +37,19 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.flightbooking.R
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navigateToLoginScreen: () -> Unit = { }) {
+    var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var showPasswordIcon by rememberSaveable { mutableStateOf(false) }
+
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        val (createAccountTitle, nameTitle, nameTextField, emailTitle, emailTextField, passwordTitle, passwordTextField, termsOfServiceText, signUpButton, orDivider, signUpWithGoogle, alreadyHaveAccountText) = createRefs()
+        val (createAccountTitle, nameTitle, nameTextField, emailTitle, emailTextField, passwordTitle, passwordTextField, agreeToTermsText, termsOfServiceText, signUpButton, orDivider, signUpWithGoogle, alreadyHaveAccountText, signInHereText) = createRefs()
         Text(
             text = stringResource(R.string.create_an_account),
             style = MaterialTheme.typography.headlineMedium,
@@ -63,7 +69,7 @@ fun RegisterScreen() {
             })
 
         OutlinedTextField(
-            value = "", onValueChange = { }, label = {
+            value = name, onValueChange = { name = it }, placeholder = {
                 Text(stringResource(R.string.john_doe))
             }, modifier = Modifier
                 .padding(5.dp)
@@ -75,7 +81,7 @@ fun RegisterScreen() {
                 })
 
         Text(
-            text = "Email Address",
+            text = stringResource(R.string.email_address),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(emailTitle) {
@@ -84,7 +90,7 @@ fun RegisterScreen() {
             })
 
         OutlinedTextField(
-            value = "", onValueChange = { }, label = {
+            value = email, onValueChange = { email = it }, placeholder = {
                 Text("hello@example.com")
             }, modifier = Modifier
                 .padding(5.dp)
@@ -96,7 +102,7 @@ fun RegisterScreen() {
                 })
 
         Text(
-            text = "Password", style = MaterialTheme.typography.bodyLarge,
+            text = stringResource(R.string.password), style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(passwordTitle) {
                 top.linkTo(emailTextField.bottom, margin = 15.dp)
@@ -104,11 +110,34 @@ fun RegisterScreen() {
             })
 
         OutlinedTextField(
-            value = "", onValueChange = { },
+            value = password, onValueChange = { password = it },
             trailingIcon = {
-                Icon( imageVector = Icons.Default.Visibility, contentDescription = "")},
-            label = {
-                Text("Password")
+                if (!showPasswordIcon)
+                    Icon(
+                        imageVector = Icons.Default.VisibilityOff, contentDescription = "",
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                showPasswordIcon = !showPasswordIcon
+                            }
+                        ))
+                else
+                    Icon(
+                        imageVector = Icons.Default.Visibility,
+                        contentDescription = "",
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                showPasswordIcon = !showPasswordIcon
+                            }
+                        ))
+
+            },
+            visualTransformation = if (!showPasswordIcon) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
+            placeholder = {
+                Text(stringResource(R.string.password))
             }, modifier = Modifier
                 .padding(5.dp)
                 .constrainAs(passwordTextField) {
@@ -119,21 +148,30 @@ fun RegisterScreen() {
                 })
 
         Text(
-            stringResource(R.string.by_continuing_you_agree_to_our_terms_of_service),
+            stringResource(R.string.by_continuing_you_agree_to_our),
             color = Color.Gray,
-            modifier = Modifier.constrainAs(termsOfServiceText) {
+            modifier = Modifier.constrainAs(agreeToTermsText) {
                 top.linkTo(passwordTextField.bottom, margin = 20.dp)
-                start.linkTo(parent.start)
+                start.linkTo(parent.start, margin = 10.dp)
             })
 
-        OutlinedButton(
+        Text(
+            stringResource(R.string.terms_of_service),
+            modifier = Modifier.constrainAs(termsOfServiceText) {
+                top.linkTo(passwordTextField.bottom, margin = 20.dp)
+                start.linkTo(agreeToTermsText.end, margin = 5.dp)
+            },
+            color = Color(0xFFe60000)
+        )
+
+        Button(
             onClick = {},
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFe60000)),
+            colors = ButtonDefaults.buttonColors(Color(0xFFe60000)),
             modifier = Modifier
                 .height(50.dp)
                 .constrainAs(signUpButton) {
-                    top.linkTo(termsOfServiceText.bottom, margin = 15.dp)
+                    top.linkTo(agreeToTermsText.bottom, margin = 15.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
@@ -153,7 +191,7 @@ fun RegisterScreen() {
                 width = Dimension.fillToConstraints
             }) {
             HorizontalDivider(modifier = Modifier.width(170.dp), thickness = 2.dp)
-            Text("Or", modifier = Modifier.padding(10.dp), color = Color.Black)
+            Text("or", modifier = Modifier.padding(10.dp), color = Color.Black)
             HorizontalDivider(modifier = Modifier.width(180.dp), thickness = 2.dp)
         }
 
@@ -174,15 +212,26 @@ fun RegisterScreen() {
         }
 
         Text(
-            stringResource(R.string.already_have_an_account_sign_in_here),
+            stringResource(R.string.already_have_an_account_sign),
             color = Color.Gray,
             fontSize = 15.sp,
             modifier = Modifier.constrainAs(alreadyHaveAccountText) {
-                top.linkTo(signUpWithGoogle.bottom, margin = 20.dp)
-                start.linkTo(parent.start, margin = 20.dp)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start, margin = 60.dp)
+                bottom.linkTo(parent.bottom, margin = 15.dp)
             })
+
+        Text(
+            stringResource(R.string.sign_in_here),
+            color = Color(0xFFe60000),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.constrainAs(signInHereText) {
+                start.linkTo(alreadyHaveAccountText.end, margin = 5.dp)
+                bottom.linkTo(parent.bottom,margin = 15.dp)
+            }.clickable(onClick = {
+                navigateToLoginScreen()
+            })
+        )
     }
 }
 

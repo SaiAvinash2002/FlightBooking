@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -26,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,7 +38,12 @@ import com.example.flightbooking.R
 
 
 @Composable
-fun ResetPasswordScreen() {
+fun ResetPasswordScreen(
+    navigateToLoginScreen: () -> Unit = {},
+    navigateToRegisterScreen: () -> Unit = {}
+) {
+    var password by remember { mutableStateOf("") }
+    var reEnterPassword by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var reEnterShowPassword by remember { mutableStateOf(false) }
     ConstraintLayout(
@@ -44,6 +52,8 @@ fun ResetPasswordScreen() {
             .fillMaxSize()
     ) {
         val (resetPasswordTitle, resetPasswordDescription, enterPasswordtext, enterPasswordTextField, reenterPasswordtext, reenterPasswordTextField, resetButton, createAnAccount) = createRefs()
+
+        // MISSING BACK BUTTON.
         Text(
             stringResource(R.string.reset_password),
             style = MaterialTheme.typography.headlineMedium,
@@ -92,15 +102,21 @@ fun ResetPasswordScreen() {
 
             },
 
-            value = "", onValueChange = { },
-            label = {
+            value = password, onValueChange = { password = it },
+            placeholder = {
                 Text(stringResource(R.string.password))
             },
             modifier = Modifier.constrainAs(enterPasswordTextField) {
-                top.linkTo(enterPasswordtext.bottom)
+                top.linkTo(enterPasswordtext.bottom, margin = 15.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
+            },
+            visualTransformation = if(showPassword){
+                VisualTransformation.None
+            }
+            else{
+                PasswordVisualTransformation()
             }
         )
 
@@ -129,15 +145,19 @@ fun ResetPasswordScreen() {
                         modifier = Modifier.clickable() {
                             reEnterShowPassword = !reEnterShowPassword
                         })
-
             },
-
-            value = "", onValueChange = { },
-            label = {
+            visualTransformation = if(reEnterShowPassword){
+                VisualTransformation.None
+            }
+            else{
+                PasswordVisualTransformation()
+            },
+            value = reEnterPassword, onValueChange = { reEnterPassword = it },
+            placeholder = {
                 Text(stringResource(R.string.re_enter_password))
             },
             modifier = Modifier.constrainAs(reenterPasswordTextField) {
-                top.linkTo(reenterPasswordtext.bottom)
+                top.linkTo(reenterPasswordtext.bottom, margin = 10.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
@@ -145,13 +165,16 @@ fun ResetPasswordScreen() {
         )
 
         Button(
-            onClick = { },
+            onClick = {
+                if (password == reEnterPassword)
+                    navigateToLoginScreen()
+            },
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFFe60000)),
             modifier = Modifier
                 .height(50.dp)
                 .constrainAs(resetButton) {
-                    top.linkTo(reenterPasswordTextField.bottom, margin = 15.dp)
+                    top.linkTo(reenterPasswordTextField.bottom, margin = 20.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
@@ -173,6 +196,9 @@ fun ResetPasswordScreen() {
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 color = Color(0xFFe60000),
+                modifier = Modifier.clickable(
+                    onClick = { navigateToRegisterScreen() }
+                )
             )
         }
     }

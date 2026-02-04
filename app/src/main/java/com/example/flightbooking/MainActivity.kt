@@ -15,9 +15,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        val splashScreen = installSplashScreen()  // Show splash screen first.
         super.onCreate(savedInstanceState)
-        setTheme(R.style.Theme_FlightBooking)
+        splashScreen.setKeepOnScreenCondition { false }
+//        setTheme(R.style.Theme_FlightBooking)  // Change the theme to app or default theme.
         enableEdgeToEdge()
         setContent {
             FlightBookingTheme {

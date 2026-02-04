@@ -1,5 +1,10 @@
 package com.example.flightbooking.view
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,15 +16,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,17 +57,20 @@ import com.example.flightbooking.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
-    navigateToForgotPasswordScreen: () -> Unit ={},
-    navigateToRegisterScreen: () -> Unit = {}
+    navigateToForgotPasswordScreen: () -> Unit = {},
+    navigateToRegisterScreen: () -> Unit = {},
+    navigateToHomeScreen: () -> Unit = {},
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var passowrd by rememberSaveable { mutableStateOf("") }
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
-    var isEmailLogin by rememberSaveable { mutableStateOf(false) }
+    var isEmailLogin by rememberSaveable { mutableStateOf(true) }
     var passwordVisibilityIcon by rememberSaveable { mutableStateOf(true) }
+    var keepMeSignedIn by rememberSaveable { mutableStateOf(true) }
     val phoneNumber = rememberSaveable { mutableStateOf("") }
+
 //    val state = rememberKomposeCountryCodePickerState()
-    var list = listOf("Email", "Phone Number")
+    val list = listOf("Email", "Phone Number")
 
     ConstraintLayout(
         modifier = Modifier
@@ -64,12 +78,12 @@ fun LoginScreen(
             .padding(10.dp)
     ) {
 
-        val (loginTitle, welcomeTitle, emailTitle, emailTextField, passwordTitle, passwordTextField, forgotPasswordTitle, keepmeSignInCheckbox, keepmeSignInText, tabLayout, loginButton) = createRefs()
+        val (loginTitle, welcomeTitle, emailTitle, emailTextField, passwordTitle, passwordTextField, forgotPasswordTitle, keepmeSignInCheckbox, keepmeSignInText, tabLayout, loginButton, testColumn, phoneNumberLoginTitle, orDivider, signUpWithGoogle, createAnAccountBtn) = createRefs()
         Text(
-            "Login", style = MaterialTheme.typography.headlineMedium,
+            stringResource(R.string.login), style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.constrainAs(loginTitle) {
-                top.linkTo(parent.top, margin = 60.dp)
+                top.linkTo(parent.top, margin = 120.dp)
                 start.linkTo(parent.start)
             })
 
@@ -85,6 +99,15 @@ fun LoginScreen(
         // TABS FOR LOGIN WITH EMAIL (OR) PHONE NUMBER
         TabRow(
             selectedTabIndex = selectedTabIndex,
+            contentColor = Color.Black,
+            indicator = { tabsList ->
+                if (selectedTabIndex < tabsList.size){
+                    TabRowDefaults.PrimaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(tabsList[selectedTabIndex]),
+                        color = Color(0xFFe60000)
+                    )
+                }
+            },
             modifier = Modifier
                 .constrainAs(tabLayout) {
                     top.linkTo(welcomeTitle.bottom)
@@ -94,80 +117,74 @@ fun LoginScreen(
                     selected = selectedTabIndex == index,
                     onClick = {
                         selectedTabIndex = index
-                        isEmailLogin = !isEmailLogin
+                        isEmailLogin = index == 0
                     },
                 ) {
-                    Text(tabTitle, modifier = Modifier.padding(20.dp))
+                    Text(tabTitle, modifier = Modifier.padding(20.dp), color = if(selectedTabIndex==index) Color(0xFFE60000) else Color.Black)
                 }
             }
         }
 
-        if (!isEmailLogin) {
-            // Login with email id.
-            Text(
-                text = stringResource(R.string.email_address),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(emailTitle) {
-                    top.linkTo(tabLayout.bottom, margin = 15.dp)
-                    start.linkTo(parent.start)
-                })
 
-            OutlinedTextField(
-                value = email, onValueChange = { email = it },
-                label = {
-                    Text("hello@example.com")
-                },
-                modifier = Modifier.constrainAs(emailTextField) {
-                    top.linkTo(emailTitle.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                }
-            )
-        } else {
-            // Login with phone number.
-            Text(
-                stringResource(R.string.phone_number),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.constrainAs(emailTitle) {
-                    top.linkTo(tabLayout.bottom, margin = 15.dp)
-                    start.linkTo(parent.start)
-                })
+        Column(modifier = Modifier.constrainAs(testColumn) {
+            top.linkTo(tabLayout.bottom)
+        }) {
 
-            OutlinedTextField(
-                value = phoneNumber.value,
-                onValueChange = { phoneNumber.value = it },
-                label = { Text(stringResource(R.string.phone_number)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                leadingIcon = {
+            Spacer(modifier = Modifier.height(15.dp))
+            if (isEmailLogin) {
+                // Login with email id.
+                Text(
+                    text = stringResource(R.string.email_address),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = email, onValueChange = { email = it },
+                    placeholder = {
+                        Text("hello@example.com")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                // Login with phone number.
+                Text(
+                    stringResource(R.string.phone_number),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
 
-//                        KomposeCountryCodePicker(
-//
-//                        )
-//
+                OutlinedTextField(
+                    value = phoneNumber.value,
+                    onValueChange = { phoneNumber.value = it },
+                    placeholder = { Text(stringResource(R.string.phone_number)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    leadingIcon = {
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+//                        KomposeCountryCodePicker()
 //                        Spacer(modifier = Modifier.width(4.dp))
 //                        Text("|")
 //                        Spacer(modifier = Modifier.width(4.dp))
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
 
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
 
         Text(
-            text = "Password",
+            text = stringResource(R.string.password),
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.constrainAs(passwordTitle) {
-                top.linkTo(emailTextField.bottom, margin = 15.dp)
+                top.linkTo(testColumn.bottom, margin = 15.dp)
                 start.linkTo(parent.start)
             })
 
@@ -177,51 +194,87 @@ fun LoginScreen(
             fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
             color = Color(0xFFE60000),
-            modifier = Modifier.constrainAs(forgotPasswordTitle) {
-                top.linkTo(emailTextField.bottom, margin = 15.dp)
-                end.linkTo(parent.end)
-            })
+            modifier = Modifier
+                .constrainAs(forgotPasswordTitle) {
+                    top.linkTo(testColumn.bottom, margin = 15.dp)
+                    end.linkTo(parent.end)
+                }
+                .clickable(onClick = {
+                    navigateToForgotPasswordScreen()
+                })
+        )
 
         OutlinedTextField(
             trailingIcon = {
                 if (passwordVisibilityIcon)
                     Icon(
                         imageVector = Icons.Default.VisibilityOff,
-                        contentDescription = stringResource(R.string.toggle_password)
+                        contentDescription = stringResource(R.string.toggle_password),
+                        modifier = Modifier.clickable(onClick = {
+                            passwordVisibilityIcon = !passwordVisibilityIcon
+                        })
                     )
                 else
                     Icon(
                         imageVector = Icons.Default.Visibility,
-                        contentDescription = stringResource(R.string.toggle_password)
+                        contentDescription = stringResource(R.string.toggle_password),
+                        modifier = Modifier.clickable(onClick = {
+                            passwordVisibilityIcon = !passwordVisibilityIcon
+                        })
                     )
             },
             value = passowrd, onValueChange = { passowrd = it },
-            label = {
+            placeholder = {
                 Text(stringResource(R.string.password))
             },
             modifier = Modifier.constrainAs(passwordTextField) {
-                top.linkTo(passwordTitle.bottom)
+                top.linkTo(passwordTitle.bottom, margin = 10.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
+            },
+
+            // To make the password invisible.
+            visualTransformation = if (!passwordVisibilityIcon) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
             }
+
         )
 
         Row(modifier = Modifier.constrainAs(keepmeSignInCheckbox) {
             top.linkTo(passwordTextField.bottom, margin = 15.dp)
         }, verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.CheckBox,
-                contentDescription = stringResource(R.string.keep_me_signed_in_check_in),
-                tint = Color(0xFFE60000)
-            )
+            // Toggle the icon of keep me signed in.
+            if (keepMeSignedIn) {
+                Icon(
+                    imageVector = Icons.Default.CheckBox,
+                    contentDescription = stringResource(R.string.keep_me_signed_in_check_in),
+                    tint = Color(0xFFE60000),
+                    modifier = Modifier.clickable(onClick = {
+                        keepMeSignedIn = !keepMeSignedIn
+                    })
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.CheckBoxOutlineBlank,
+                    contentDescription = stringResource(R.string.keep_me_signed_in_check_in),
+                    tint = Color(0xFFE60000),
+                    modifier = Modifier.clickable(onClick = {
+                        keepMeSignedIn = !keepMeSignedIn
+                    })
+                )
+            }
             Spacer(modifier = Modifier.width(10.dp))
             Text(stringResource(R.string.keep_me_signed_in))
         }
 
 
         Button(
-            onClick = { },
+            onClick = {
+                navigateToHomeScreen()
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE60000)),
             modifier = Modifier
                 .height(50.dp)
@@ -235,12 +288,60 @@ fun LoginScreen(
         ) {
             Text(stringResource(R.string.login))
         }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.constrainAs(orDivider) {
+                top.linkTo(loginButton.bottom, margin = 10.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+            }) {
+            HorizontalDivider(modifier = Modifier.width(130.dp), thickness = 2.dp)
+            Text(stringResource(R.string.or_sign_in_with), modifier = Modifier.padding(10.dp), color = Color.Black)
+            HorizontalDivider(modifier = Modifier.width(180.dp), thickness = 2.dp)
+        }
+
+        Button(
+            onClick = {},
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFCBC4C4)),
+            modifier = Modifier
+                .height(50.dp)
+                .constrainAs(signUpWithGoogle) {
+                    top.linkTo(orDivider.bottom, margin = 10.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
+        ) {
+
+            Text(stringResource(R.string.continue_with_google), color = Color.Black)
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(createAnAccountBtn) {
+                    bottom.linkTo(parent.bottom, margin = 30.dp)
+                }) {
+            Text(
+                stringResource(R.string.create_an_account),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                color = Color(0xFFe60000),
+                modifier = Modifier.clickable(onClick = {
+                    navigateToRegisterScreen()
+                })
+            )
+        }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
 private fun LoginScreenPrev() {
-
-     LoginScreen()
+    LoginScreen()
 }
