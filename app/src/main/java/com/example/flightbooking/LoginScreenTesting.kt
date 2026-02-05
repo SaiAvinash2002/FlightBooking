@@ -1,9 +1,7 @@
-package com.example.flightbooking.view
+package com.example.flightbooking
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,24 +42,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.flightbooking.R
-import com.example.flightbooking.viewmodel.LoginViewModel
-
-//import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryCodePickerState
 
 @Composable
-fun LoginScreen(
-    navigateToForgotPasswordScreen: () -> Unit = {},
-    navigateToRegisterScreen: () -> Unit = {},
-    navigateToHomeScreen: () -> Unit = {},
-    navigateToOtpVerificationScreen: () -> Unit = {},
-) {
+fun LoginScreenTesting() {
     var email by rememberSaveable { mutableStateOf("") }
     var passowrd by rememberSaveable { mutableStateOf("") }
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
@@ -102,7 +89,7 @@ fun LoginScreen(
             selectedTabIndex = selectedTabIndex,
             contentColor = Color.Black,
             indicator = { tabsList ->
-                if (selectedTabIndex < tabsList.size) {
+                if (selectedTabIndex < tabsList.size){
                     TabRowDefaults.PrimaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(tabsList[selectedTabIndex]),
                         color = Color(0xFFe60000)
@@ -121,11 +108,7 @@ fun LoginScreen(
                         isEmailLogin = index == 0
                     },
                 ) {
-                    Text(
-                        tabTitle,
-                        modifier = Modifier.padding(20.dp),
-                        color = if (selectedTabIndex == index) Color(0xFFE60000) else Color.Black
-                    )
+                    Text(tabTitle, modifier = Modifier.padding(20.dp), color = if(selectedTabIndex==index) Color(0xFFE60000) else Color.Black)
                 }
             }
         }
@@ -150,9 +133,7 @@ fun LoginScreen(
                     placeholder = {
                         Text("hello@example.com")
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("emailTag")
+                    modifier = Modifier.fillMaxWidth().testTag("emailTag")
                 )
             } else {
                 // Login with phone number.
@@ -180,9 +161,7 @@ fun LoginScreen(
 
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("passwordTag")
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -209,7 +188,7 @@ fun LoginScreen(
                     end.linkTo(parent.end)
                 }
                 .clickable(onClick = {
-                    navigateToForgotPasswordScreen()
+//                    navigateToForgotPasswordScreen()
                 })
         )
 
@@ -219,11 +198,9 @@ fun LoginScreen(
                     Icon(
                         imageVector = Icons.Default.VisibilityOff,
                         contentDescription = stringResource(R.string.toggle_password),
-                        modifier = Modifier
-                            .clickable(onClick = {
-                                passwordVisibilityIcon = !passwordVisibilityIcon
-                            })
-                            .testTag("visibilityOffTag")
+                        modifier = Modifier.clickable(onClick = {
+                            passwordVisibilityIcon = !passwordVisibilityIcon
+                        }).testTag("visibilityOffTag")
                     )
                 else
                     Icon(
@@ -243,7 +220,7 @@ fun LoginScreen(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
-            },
+            }.testTag("passwordTag"),
 
             // To make the password invisible.
             visualTransformation = if (!passwordVisibilityIcon) {
@@ -263,11 +240,9 @@ fun LoginScreen(
                     imageVector = Icons.Default.CheckBox,
                     contentDescription = stringResource(R.string.keep_me_signed_in_check_in),
                     tint = Color(0xFFE60000),
-                    modifier = Modifier
-                        .clickable(onClick = {
-                            keepMeSignedIn = !keepMeSignedIn
-                        })
-                        .testTag("filledCheckBoxTag")
+                    modifier = Modifier.clickable(onClick = {
+                        keepMeSignedIn = !keepMeSignedIn
+                    }).testTag("filledCheckBoxTag")
                 )
             } else {
                 Icon(
@@ -276,7 +251,7 @@ fun LoginScreen(
                     tint = Color(0xFFE60000),
                     modifier = Modifier.clickable(onClick = {
                         keepMeSignedIn = !keepMeSignedIn
-                    })
+                    }).testTag("unCheckedBoxTag")
                 )
             }
             Spacer(modifier = Modifier.width(10.dp))
@@ -286,10 +261,7 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                if (isEmailLogin)
-                    navigateToHomeScreen()
-                else
-                    navigateToOtpVerificationScreen()
+//                navigateToHomeScreen()
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE60000)),
             modifier = Modifier
@@ -314,11 +286,7 @@ fun LoginScreen(
                 width = Dimension.fillToConstraints
             }) {
             HorizontalDivider(modifier = Modifier.width(130.dp), thickness = 2.dp)
-            Text(
-                stringResource(R.string.or_sign_in_with),
-                modifier = Modifier.padding(10.dp),
-                color = Color.Black
-            )
+            Text(stringResource(R.string.or_sign_in_with), modifier = Modifier.padding(10.dp), color = Color.Black)
             HorizontalDivider(modifier = Modifier.width(180.dp), thickness = 2.dp)
         }
 
@@ -335,7 +303,6 @@ fun LoginScreen(
                     width = Dimension.fillToConstraints
                 }
         ) {
-
             Text(stringResource(R.string.continue_with_google), color = Color.Black)
         }
 
@@ -353,15 +320,8 @@ fun LoginScreen(
                 fontSize = 16.sp,
                 color = Color(0xFFe60000),
                 modifier = Modifier.clickable(onClick = {
-                    navigateToRegisterScreen()
-                })
+                }).testTag("createAnAccountTag")
             )
         }
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun LoginScreenPrev() {
-    LoginScreen()
 }

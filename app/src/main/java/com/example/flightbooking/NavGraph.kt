@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.flightbooking.view.ForgotPasswordScreen
 import com.example.flightbooking.view.HomeScreen
 import com.example.flightbooking.view.LoginScreen
+import com.example.flightbooking.view.OTPVerificationScreen
 import com.example.flightbooking.view.RegisterScreen
 import com.example.flightbooking.view.ResetPasswordScreen
 
@@ -23,7 +24,10 @@ fun NavGraph(navController: NavHostController) {
                     navController.navigate("forgotPasswordScreen")
                 },
                 navigateToHomeScreen = {
-                    navController.navigate("loginScreen")
+                    navController.navigate("homeScreen")
+                },
+                navigateToOtpVerificationScreen = {
+                    navController.navigate("otpVerificationScreen")
                 }
             )
         }
@@ -42,6 +46,13 @@ fun NavGraph(navController: NavHostController) {
             ResetPasswordScreen(
                 navigateToLoginScreen = { navController.navigate("loginScreen")},
                 navigateToRegisterScreen = {  navController.navigate("registerScreen") }
+            )
+        }
+        composable("otpVerificationScreen") {
+            OTPVerificationScreen(
+                navigateToHomeScreen = {
+                    navController.navigate("homeScreen")
+                }
             )
         }
         composable("homeScreen") {

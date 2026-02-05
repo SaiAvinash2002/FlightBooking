@@ -29,4 +29,5 @@
     <string name="verify">Verify</string>
     <string name="or_sign_in_with">or sign in with</string>
     <string name="terms_of_service">terms of service.</string>
+    <string name="resend_otp">Resend OTP</string>
 </resources>

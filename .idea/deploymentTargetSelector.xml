@@ -5,13 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LoginScreenPrev">
+      <SelectionState runConfigName="test_email_and_password_fields()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RegisterScreenPrev">
+      <SelectionState runConfigName="LoginScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ForgotPasswordScreenPrev">
+      <SelectionState runConfigName="test_checkbox()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="test_checkbox_if_unchecked()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="test_create_an_account_is_clickable()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
