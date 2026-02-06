@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,14 +26,17 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +56,8 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.flightbooking.R
 import com.example.flightbooking.viewmodel.LoginViewModel
+import network.chaintech.cmpcountrycodepicker.model.CountryDetails
+import network.chaintech.cmpcountrycodepicker.ui.CountryPickerBasicTextField
 
 //import com.joelkanyi.jcomposecountrycodepicker.component.rememberKomposeCountryCodePickerState
 
@@ -163,27 +169,29 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                OutlinedTextField(
-                    value = phoneNumber.value,
-                    onValueChange = { phoneNumber.value = it },
-                    placeholder = { Text(stringResource(R.string.phone_number)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    leadingIcon = {
+//                OutlinedTextField(
+//                    value = phoneNumber.value,
+//                    onValueChange = { phoneNumber.value = it },
+//                    placeholder = { Text(stringResource(R.string.phone_number)) },
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+//                    leadingIcon = {
+//
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically
+//                        ) {
+////                        KomposeCountryCodePicker()
+////                        Spacer(modifier = Modifier.width(4.dp))
+////                        Text("|")
+////                        Spacer(modifier = Modifier.width(4.dp))
+//
+//                        }
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .testTag("passwordTag")
+//                )
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-//                        KomposeCountryCodePicker()
-//                        Spacer(modifier = Modifier.width(4.dp))
-//                        Text("|")
-//                        Spacer(modifier = Modifier.width(4.dp))
-
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("passwordTag")
-                )
+                CountryPicker()
             }
         }
 
@@ -251,7 +259,6 @@ fun LoginScreen(
             } else {
                 PasswordVisualTransformation()
             }
-
         )
 
         Row(modifier = Modifier.constrainAs(keepmeSignInCheckbox) {
@@ -294,6 +301,7 @@ fun LoginScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE60000)),
             modifier = Modifier
                 .height(50.dp)
+                .testTag("loginButtonTag")
                 .constrainAs(loginButton) {
                     top.linkTo(keepmeSignInCheckbox.bottom, margin = 15.dp)
                     start.linkTo(parent.start)
@@ -358,6 +366,39 @@ fun LoginScreen(
             )
         }
     }
+}
+
+@Composable
+fun CountryPicker(modifier: Modifier = Modifier) {
+    val selectedCountryState: MutableState<CountryDetails?> = remember {
+        mutableStateOf(null)
+    }
+    var mobileNumber by remember {
+        mutableStateOf("")
+    }
+    CountryPickerBasicTextField(
+        mobileNumber = mobileNumber,
+        defaultCountryCode = "ad",
+        onMobileNumberChange = {
+            mobileNumber = it
+        },
+        onCountrySelected = {
+            selectedCountryState.value = it // BUG
+        },
+        modifier = modifier.fillMaxWidth(),
+        defaultPaddingValues = PaddingValues(6.dp),
+        showCountryFlag = true,
+        showCountryPhoneCode = true,
+        showCountryName = false,
+        showCountryCode = true,
+        showArrowDropDown = true,
+        spaceAfterCountryFlag = 8.dp,
+        spaceAfterCountryPhoneCode = 6.dp,
+        spaceAfterCountryName = 6.dp,
+        spaceAfterCountryCode = 6.dp,
+        shape = RoundedCornerShape(5.dp),
+        verticalDividerColor = Color(0XFFDDDDDD)
+    )
 }
 
 @Preview(showSystemUi = true)
